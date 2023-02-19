@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link th:href="@{/webjars/bootstrap/css/bootstrap.css}" type="text/css" rel="stylesheet">
+    <link th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.css}" rel="stylesheet">
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.js}" type="text/javascript"></script>
+    <script th:src="@{/webjars/jquery/jquery.js}" type="text/javascript"></script>
+    <script th:src="@{/js/custom.js}" type="text/javascript"></script>
+    <script th:src="@{js/dishes.js}" type="text/javascript"></script>
+    <script th:src="@{/js/user_login.js}" type="text/javascript"></script>
+    <link th:href="@{/css/custom.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/css/messList.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/css/orderList.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/css/messModal.css}" rel="stylesheet" type="text/css">
+    <meta http-equiv="content-type" content="text/html" charset="utf-8">
+    <meta name="author" content="树远"/>
+    <title>Welcome</title>
+</head>
+<body>
+
+<header class="p-3 text-dark" style="background-color: #e3f2fd;">
+    <div class="container">
+        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+            <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                <img th:src="@{/images/xxlogo_update.png}" style="height: 50px"/>
+            </a>
+            <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                <li><a th:href="@{index}" class="nav-link px-2" th:text="#{home}">主页</a></li>
+                <li><a href="#" class="nav-link px-2" data-bs-toggle="offcanvas" role="button" data-bs-target="#history" th:text="#{history}" >历史</a></li>
+                <div class="offcanvas offcanvas-start" id="history">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title">
+                            历史订单
+                        </h5>
+                        <button type="button" style="border-radius: 10px; border: 1px solid black; background-color: gold" onclick="showHistory()">
+                            <i class="bi bi-arrow-clockwise"></i>
+                        </button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <div id="history_list" class="list-group">
+<!--                            <li class="list-group-item">-->
+<!--                                <div class="order-title-sty">-->
+<!--                                    <h5>烧鸭饭</h5>-->
+<!--                                    <h5>#22</h5>-->
+<!--                                </div>-->
+<!--                                <div class="order-dishes-view" style="border-bottom: 1px solid gold">-->
+<!--                                    <img th:src="@{/schoolres/images/dishes_one_four.jpg}" class="order-dishes-img">-->
+<!--                                    <div class="order-dishes-text-view">-->
+<!--                                        <span>排骨饭</span>-->
+<!--                                        <span class="history-item-text">价格: 8<i class="bi-currency-yen"></i></span>-->
+<!--                                        <span class="history-item-text">数量: x3</span>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                <div class="history-item-text-view">-->
+<!--                                    <span class="history-item-text">总价: 24<i class="bi-currency-yen"></i></span>-->
+<!--                                    <span class="history-item-text">完成日期: 2023/2/18</span>-->
+<!--                                </div>-->
+<!--                            </li>-->
+                        </div>
+                    </div>
+                </div>
+
+                <!--订单块-->
+                <li><a href="#" class="nav-link px-2" th:text="#{order}"  data-bs-toggle="offcanvas" role="button" data-bs-target="#order-offcanvas" >订单</a></li>
+                <div class="offcanvas offcanvas-start" id="order-offcanvas">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title">订单</h5>
+                        <button type="button" style="border-radius: 10px; border: 1px solid black; background-color: gold" onclick="showOrders()">
+                            <i class="bi bi-arrow-clockwise"></i>
+                        </button>
+<!--                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>-->
+                    </div>
+                    <div class="offcanvas-body">
+                        <div id="orderList" class="list-group">
+
+                        </div>
+                    </div>
+                </div>
+                <!--订单块-->
+
+                <!--消息块-->
+                <li><a href="#" class="nav-link px-2" data-bs-toggle="offcanvas" data-bs-target="#message_offcanvas" th:text="#{user_mess}">消息</a></li>
+                <div class="offcanvas offcanvas-start" id="message_offcanvas">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title">
+                            消息列表
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <div id="mess-obj-list-group" class="list-group">
+
+                        </div>
+
+                    </div>
+                </div>
+                <!--消息块-->
+
+                <li class="nav-item dropdown">
+                    <a role="button" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" th:text="#{category}" style="text-decoration: none">
+                        类别
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu">
+                        <li><a href="#res_one" class="dropdown-item">一食堂</a></li>
+                        <li><a href="#res_two" class="dropdown-item">二食堂</a></li>
+                    </ul>
+                </li>
+            </ul>
+
+            <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
+                <div class="input-group">
+                    <input type="search" class="form-control form-control-dark" placeholder="Search..." aria-label="Search">
+                    <button class="btn btn-primary" type="button" onclick="search_offcanvas($(this))">Go</button>
+                </div>
+            </form>
+
+            <div id="login_and_register" class="text-end">
+                <a th:href="@{/login}" class="btn btn-outline-primary" th:text="#{login}">登录</a>
+                <a th:href="@{/register}" class="btn btn-warning" th:text="#{register}">注册</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="d-inline-flex">
+    <div class="container-fluid mt-3" style="margin-right: 0px; margin-left: 50px">
+        <div class="row">
+            <div class="col-5 mt-2">
+
+                    <!-- 轮播 -->
+                    <div id="dishes_carousel" class="carousel carousel-dark slide" data-bs-ride="carousel">
+                        <div class="carousel-indicators">
+                            <button type="button" data-bs-target="#dishes_carousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                            <button type="button" data-bs-target="#dishes_carousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                            <button type="button" data-bs-target="#dishes_carousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                        </div>
+                        <div class="carousel-inner rounded">
+                            <div class="carousel-item active">
+                                <img th:src="@{/images/food_one.jpg}" alt="..." class="d-block" style="width:100%">
+                                <div class="carousel-caption d-none d-md-block">
+                                    <h5>校园大促</h5>
+                                    <p>每晚八点，免单红包</p>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <img th:src="@{/images/food_two.jpg}" alt="..." class="d-block" style="width:100%">
+                                <div class="carousel-caption d-none d-md-block text-white">
+                                    <h5>校园大促</h5>
+                                    <p>每晚八点，免单红包</p>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <img th:src="@{/images/food_three.jpg}" alt="..." class="d-block" style="width:100%">
+                                <div class="carousel-caption d-none d-md-block">
+                                    <h5>校园大促</h5>
+                                    <p>每晚八点，免单红包</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#dishes_carousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#dishes_carousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+                    <!-- 轮播 -->
+            </div>
+
+            <div id="six_dishes" class="col-7">
+                <!--            <div class="container w-100">-->
+                <div class="row">
+
+                    <!-- 第一张图 -->
+                    <div class="col-4">
+
+                        <!-- 图片部分 -->
+                        <div class="position-relative">
+                            <!-- 徽章 -->
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" hidden>
+                                0
+                            </span>
+                            <img alt="加载中" class="d-block rounded" style="width: 100%"/>
+                        </div>
+
+                        <!-- 第一张图中的文字部分 -->
+                        <div class="row mt-1">
+
+                            <div class="col-8">
+                                <h6>
+                                    <!-- 菜名 -->
+                                    <b></b>
+                                    <span class="badge text-bg-light text-danger">
+                                        <!-- 价格 -->
+                                        <span></span> <i class="bi bi-currency-yen"></i>
+                                    </span><br>
+                                    <!-- 商家名 -->
+                                    <span class="small text-secondary"><i class="bi bi-house-heart"></i> <span></span> </span>
+                                </h6>
+                            </div>
+
+                            <!-- 增减按钮 -->
+                            <div class="col-4">
+                                <div class="btn-group" role="button">
+                                    <button class="btn btn-outline-danger btn-sm" type="button">
+                                        <i class="bi bi-dash-circle"></i>
+                                    </button>
+                                    <button class="btn btn-outline-info btn-sm" type="button">
+                                        <i class="bi bi-plus-circle"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- 第一张图end -->
+
+                    <!-- 第二张图 -->
+                    <div class="col-4">
+
+                        <div class="position-relative">
+                            <!-- 徽章 -->
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" hidden>
+                                0
+                            </span>
+                            <img alt="加载中" class="d-block rounded" style="width: 100%"/>
+                        </div>
+
+                        <!-- 第一张图中的文字部分 -->
+                        <div class="row mt-1">
+                            <div class="col-8">
+                                <h6>
+                                    <b></b>
+                                    <span class="badge text-bg-light text-danger">
+                                        <!-- 价格 -->
+                                        <span></span> <i class="bi bi-currency-yen"></i>
+                                    </span><br>
+                                    <!-- 商家名 -->
+                                    <span class="small text-secondary"><i class="bi bi-house-heart"></i> <span></span> </span>
+                                </h6>
+                            </div>
+                            <div class="col-4">
+                                <div class="btn-group" role="button">
+                                    <button class="btn btn-outline-danger btn-sm" type="button">
+                                        <i class="bi bi-dash-circle"></i>
+                                    </button>
+                                    <button class="btn btn-outline-info btn-sm" type="button">
+                                        <i class="bi bi-plus-circle"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- 第二张图end -->
+
+                    <!-- 第三张图 -->
+                    <div class="col-4">
+
+                        <div class="position-relative">
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" hidden>
+                                0
+                            </span>
+                            <img alt="加载中" class="d-block rounded" style="width: 100%"/>
+                        </div>
+
+                        <!-- 第一张图中的文字部分 -->
+                        <div class="row mt-1">
+                            <div class="col-8">
+                                <h6>
+                                    <b></b>
+                                    <span class="badge text-bg-light text-danger">
+                                        <span></span> <i class="bi bi-currency-yen"></i>
+                                    </span><br>
+                                    <!-- 商家名 -->
+                                    <span class="small text-secondary"><i class="bi bi-house-heart"></i> <span></span> </span>
+                                </h6>
+                            </div>
+                            <div class="col-4">
+                                <div class="btn-group" role="button">
+                                    <button class="btn btn-outline-danger btn-sm" type="button">
+                                        <i class="bi bi-dash-circle"></i>
+                                    </button>
+                                    <button class="btn btn-outline-info btn-sm" type="button">
+                                        <i class="bi bi-plus-circle"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- 第三张图 -->
+                </div>
+
+                <div class="row mb-2 mt-2">
+
+                    <!-- 第一张图 -->
+                    <div class="col-4">
+
+                        <div class="position-relative">
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" hidden>
+                                0
+                            </span>
+                            <img th:src="@{/images/food_one.jpg}" class="d-block rounded" style="width: 100%"/>
+                        </div>
+
+                        <!-- 第一张图中的文字部分 -->
+                        <div class="row mt-1">
+                            <div class="col-8">
+                                <h6>
+                                    <b>美味蟹黄堡</b>
+                                    <span class="badge text-bg-light text-danger">
+                                        <span></span> <i class="bi bi-currency-yen"></i>
+                                    </span><br>
+                                    <!-- 商家名 -->
+                                    <span class="small text-secondary"><i class="bi bi-house-heart"></i> <span></span> </span>
+                                </h6>
+                            </div>
+                            <div class="col-4">
+                                <div class="btn-group" role="button">
+                                    <button class="btn btn-outline-danger btn-sm" type="button">
+                                        <i class="bi bi-dash-circle"></i>
+                                    </button>
+                                    <button class="btn btn-outline-info btn-sm" type="button">
+                                        <i class="bi bi-plus-circle"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- 第一张图 -->
+
+                    <!-- 第二张图 -->
+                    <div id="last_image_2" class="col-4">
+
+                        <div class="position-relative">
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" hidden>
+                                0
+                            </span>
+                            <img th:src="@{/images/food_one.jpg}" class="d-block rounded" style="width: 100%"/>
+                        </div>
+
+                        <!-- 第一张图中的文字部分 -->
+                        <div class="row mt-1">
+                            <div class="col-8">
+                                <h6>
+                                    <b>美味蟹黄堡</b>
+                                    <span class="badge text-bg-light text-danger">
+                                        <span></span> <i class="bi bi-currency-yen"></i>
+                                    </span><br>
+                                    <!-- 商家名 -->
+                                    <span class="small text-secondary"><i class="bi bi-house-heart"></i> <span></span> </span>
+                                </h6>
+                            </div>
+                            <div class="col-4">
+                                <div class="btn-group" role="button">
+                                    <button class="btn btn-outline-danger btn-sm" type="button">
+                                        <i class="bi bi-dash-circle"></i>
+                                    </button>
+                                    <button class="btn btn-outline-info btn-sm" type="button">
+                                        <i class="bi bi-plus-circle"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- 第二张图 -->
+
+                    <!-- 第三张图 -->
+                    <div id="last_image_3" class="col-4">
+
+                        <div class="position-relative">
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" hidden>
+                                0
+                            </span>
+                            <img th:src="@{/images/food_one.jpg}" class="d-block rounded" style="width: 100%"/>
+                        </div>
+
+                        <!-- 第一张图中的文字部分 -->
+                        <div class="row mt-1">
+                            <div class="col-8">
+                                <h6>
+                                    <b>美味蟹黄堡</b>
+                                    <span class="badge text-bg-light text-danger">
+                                        <span></span> <i class="bi bi-currency-yen"></i>
+                                    </span><br>
+                                    <!-- 商家名 -->
+                                    <span class="small text-secondary"><i class="bi bi-house-heart"></i> <span></span> </span>
+                                </h6>
+                            </div>
+                            <div class="col-4">
+                                <div class="btn-group" role="button">
+                                    <button class="btn btn-outline-danger btn-sm" type="button">
+                                        <i class="bi bi-dash-circle"></i>
+                                    </button>
+                                    <button class="btn btn-outline-info btn-sm" type="button">
+                                        <i class="bi bi-plus-circle"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- 第三张图 -->
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- 刷新和购物车 -->
+    <div>
+        <div>
+            <!-- 刷新 -->
+            <button id="refresh" class="btn btn-outline-primary mt-3 h-25" style="margin-right: 10px" data-val="ok">
+                <i class="bi bi-arrow-clockwise"></i>
+            </button>
+        </div>
+        <!-- 购物车 -->
+        <div>
+            <!-- cart -->
+            <button id="cart" class="btn btn-outline-primary mt-3 h-25" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" style="margin-right: 10px" data-count="0">
+                <i class="bi bi-cart-check"></i>
+            </button>
+
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasRightLabel">
+                        购物车 <i class="bi bi-cart-plus"></i>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <div id="address" class="mb-1" style="color: red"><b>请先登录！</b></div>
+                    <div class="input-group mb-3">
+                        <input name="address" class="form-control" type="text" list="address_datalist" placeholder="请选择地址:"/>
+                        <button type="button" class="btn btn-outline-danger" style="border-top-right-radius: 5px; border-bottom-right-radius: 5px" disabled onclick="setting_address()">设置</button>
+                        <datalist id="address_datalist">
+<!--                            <option value="13栋511"/>-->
+                        </datalist>
+                    </div>
+                    <div class="d-flex justify-content-between w-100">
+                        <button class="btn btn-outline-danger btn-sm h5" type="button" onclick="clear_all()">清空</button>
+                        <button class="btn btn-outline-danger btn-sm h5" type="button" disabled onclick="over_order()">结算</button>
+                    </div>
+                    <!-- 列表组 -->
+                    <div id="cart_list_group" class="list-group">
+
+                    </div>
+                    <!-- 列表组 -->
+                </div>
+            </div>
+        </div>
+
+        <!--结算确认框-->
+        <div class="modal fade" id="orderOver" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary">
+                        <h1 class="modal-title fs-5">请确认并下单</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div style="text-align: center">
+                            <img th:src="@{/schoolres/images/other/mony.jpg}" style="width: 300px; height: 300px">
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-light">
+                        <div style="width: 100%">
+                            <label for="remark" class="form-label">备注信息</label>
+                            <textarea id="remark" class="form-control" rows="3"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--结算确认框-->
+
+    </div>
+</div>
+
+<!-- 一食堂 -->
+<div id="res_one" class="container-fluid mt-3 w-auto" style="margin-left: 50px; margin-right: 50px">
+    <header class="header display-6 text-center mb-3">
+        <span class="badge rounded-pill text-dark" style="background-color: #e3f2fd;">
+            <span class="text-warning" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"><i class="border-end border-dark bi bi-cart-check"></i> </span> 一食堂 <span class="text-warning"><i class="border-start border-dark bi bi-arrow-clockwise"></i></span>
+        </span>
+    </header>
+</div>
+
+
+<div id="res_two" class="container-fluid mt-3 w-auto" style="margin-left: 50px; margin-right: 50px">
+    <header class="header display-6 text-center mb-3">
+        <span class="badge rounded-pill text-dark" style="background-color: #e3f2fd;">
+            <span class="text-warning" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"><i class="border-end border-dark bi bi-cart-check"></i> </span> 二食堂 <span class="text-warning"><i class="border-start border-dark bi bi-arrow-clockwise"></i></span>
+        </span>
+    </header>
+</div>
+
+<!--聊天模态框-->
+<div class="modal fade modal-xl" id="chatModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success">
+                <h1 id="mess-modal-title" class="modal-title fs-5">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="mess-container" class="mess-container">
+
+                </div>
+            </div>
+            <div th:id="mess-modal-footer" class="modal-footer bg-light">
+                <div class="input-group mb-3">
+                    <input id="chatMess" name="chatMess" type="text" class="form-control">
+                    <button id="mess-send-btn" class="btn btn-primary" type="button" onclick="sendMes($(this))" tabindex="">发送</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--聊天模态框-->
+
+<!--toast提示框-->
+<div class="position-fixed bottom-0 end-0" style="margin: 5px 5px;">
+    <div id="alert-toast" class="toast align-items-center text-black bg-light border-0" role="alert">
+        <div class="toast-header bg-danger text-black">
+            <i class="bi bi-exclamation-circle"></i>
+            <strong class="me-auto" style="margin-left: 5px"> 提示</strong>
+            <small class="text-muted">1 seconds ago</small>
+        </div>
+        <div class="toast-body">
+            搜索结果不存在!
+        </div>
+    </div>
+    </div>
+</div>
+<!--toast提示框end-->
+
+<footer id="page-footer" class="bg-light">
+    <div class="d-flex flex-row small text-secondary justify-content-center">
+        <a th:href="@{/#}" style="margin-right: 20px; text-decoration: none; color: black">回到页首</a>
+        <li class="dropdown dropdown-menu-end" style="margin-right: 30px; list-style: none">
+            <a class="dropdown-toggle" href="#" role="button"
+               data-bs-toggle="dropdown" aria-expanded="false" th:text="#{'select'}" style="text-decoration: none; color: black">
+                选择语言
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" th:href="@{/?choseLang=zh_CN}" th:text="#{'chinese'}">简体中文</a></li>
+                <li><a class="dropdown-item" th:href="@{/?choseLang=en_US}" th:text="#{'english'}">美式英语</a></li>
+            </ul>
+        </li>
+    </div>
+    <div class="d-flex flex-row justify-content-center small text-secondary mt-2 mb-2">
+        <span style="margin-right: 20px"><i class="bi bi-house-add-fill"></i> 湖南财政经济学院</span>
+        <span style="margin-right: 20px"><i class="bi bi-c-circle"></i> 树远-2023</span>
+        <span style="margin-right: 20px"><i class="bi bi-phone-fill"></i> 19537814593</span>
+    </div>
+    <div class="d-flex flex-row justify-content-center small text-secondary">
+        <span class="small text-secondary" style="margin-right: 30px"><i class="bi bi-tencent-qq"></i> 2013144941</span>
+        <span class="small text-secondary"><i class="bi bi-envelope-fill"></i> 2013144941@qq.com</span>
+    </div>
+</footer>
+
+</body>
+</html>

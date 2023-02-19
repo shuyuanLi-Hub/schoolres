@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link th:href="@{/webjars/bootstrap/css/bootstrap.css}" type="text/css" rel="stylesheet">
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.js}" type="text/javascript"></script>
+    <script th:src="@{/webjars/jquery/jquery.js}" type="text/javascript"></script>
+    <script th:src="@{/js/custom.js}" type="text/javascript"></script>
+    <meta http-equiv="content-type" content="text/html" charset="utf-8">
+    <meta name="author" content="shuyuan"/>
+    <title>Register</title>
+</head>
+<body th:background="@{/images/background.png}" style="margin-top: 80px; background-size: 100%" th:onload="checkError([[${error}]])">
+<nav class="navbar navbar-expand fixed-top justify-content-around" style="background-color: #e3f2fd;">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="login.html"><img th:src="@{/images/xiao.png}"></a>
+        <ul class="navbar-nav">
+            <a class="btn btn-primary" th:text="#{login}" th:href="@{/add_user}">登录</a>
+        </ul>
+    </div>
+</nav>
+<div class="container mt-3">
+    <div class="card w-50 m-auto">
+        <div class="card-header bg-primary text-center">
+            <h3 class="text-white">校园点餐平台-注册</h3>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/register}" method="post" id="userRegister">
+                <label for="name" class="small" th:text="#{'enter_username'} + ': '">请输入用户名: </label>
+                <div class="input-group mb-3">
+                    <span class="input-group-text"><img th:src="@{/images/user.png}"/></span>
+                    <input id="name" name="name" type="text" required
+                           class="form-control" th:placeholder="#{'username'}" oninput="change();" autofocus/>
+                    <div class="invalid-feedback" th:text="#{username_invalid_feedback}">用户名非法</div>
+                    <!-- <label for="username">用户名</label> -->
+                </div>
+                <label for="passwd" class="small" th:text="#{'enter_password'} + ': '">请输入密码: </label>
+                <div class="input-group mb-3">
+                    <span class="input-group-text"><img th:src="@{/images/passwd.png}"/></span>
+                    <input id="passwd" name="passwd" type="password" class="form-control" required oninput="passwdChange();"
+                           th:placeholder="#{'password'}"/>
+                    <div class="invalid-feedback" th:text="#{password_invalid_feedback}">密码不符合要求</div>
+                    <!-- <label for="passwd">密码</label> -->
+                </div>
+                <label for="email" class="small" th:text="#{enter_mail} + ': '">请输入邮箱: </label>
+                <div class="input-group mb-3">
+                    <span class="input-group-text"><img th:src="@{/images/email.png}"/></span>
+                    <input id="email" name="email" list="mail" type="email"
+                           th:class="form-control" oninput="mailCha()" onchange="mailV()" th:placeholder="#{mail}"/>
+                    <datalist id="mail">
+                        <option value="@qq.com"/>
+                        <option value="@163.com"/>
+                        <option value="@gmail.com"/>
+                        <option value="@yahoo.com"/>
+                    </datalist>
+                </div>
+                <label for="phone" class="small" th:text="#{enter_phone} + ': '">请输入电话号码: </label>
+                <div class="input-group mb-3">
+                    <span class="input-group-text"><img th:src="@{/images/phone_small.png}"/></span>
+                    <input id="phone" name="phone" type="tel"
+                           th:class="form-control" oninput="phoneV()" th:placeholder="#{phone}"/>
+                    <div class="invalid-feedback" th:text="#{phone_invalid_feedback}">请输入有效号码</div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <label class="small" th:text="#{enter_gender} + ': '">请输入性别: </label>
+                        <div class="input-group">
+                            <label class="input-group-text" th:text="#{gender}" for="gender">性别: </label>
+                            <select class="form-select" name="gender" id="gender">
+                                <option value="男" th:text="#{male}">男性</option>
+                                <option value="女" th:text="#{female}">女性</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <label class="small" th:text="#{enter_date} + ': '">请输入日期: </label>
+                        <div class="input-group">
+                            <label class="input-group-text" th:text="#{date}" for="date">日期: </label>
+                            <input id="date" name="date" type="date" class="form-control" th:placeholder="#{enter_date}" required/>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="card-footer text-center">
+            <button id="sub" type="submit" class="btn btn-primary" th:text="#{register}" form="userRegister" disabled>注册</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>
