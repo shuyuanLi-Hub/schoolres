@@ -1,9 +1,7 @@
 package org.shuyuan.schoolres.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,6 +27,7 @@ public class User
     private String name;
 
     @Past()
+    @NotNull
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "user_date")
     private Date date;
@@ -46,7 +45,7 @@ public class User
     @Column(name = "user_gender")
     private Character gender;
 
-    @Column(name = "user_photo")
+    @Column(name = "user_photo", insertable = false)
     private String photo;
 
     @OneToMany(targetEntity = Address.class, mappedBy = "user")

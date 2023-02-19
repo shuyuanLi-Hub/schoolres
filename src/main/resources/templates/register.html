@@ -9,7 +9,8 @@
     <meta name="author" content="shuyuan"/>
     <title>Register</title>
 </head>
-<body th:background="@{/images/background.png}" style="margin-top: 80px; background-size: 100%" th:onload="checkError([[${error}]])">
+<!--th:onload="checkError([[${error}]])"-->
+<body th:background="@{/images/background.png}" style="margin-top: 80px; background-size: 100%">
 <nav class="navbar navbar-expand fixed-top justify-content-around" style="background-color: #e3f2fd;">
     <div class="container-fluid">
         <a class="navbar-brand" href="login.html"><img th:src="@{/images/xiao.png}"></a>
@@ -76,15 +77,31 @@
                         <div class="input-group">
                             <label class="input-group-text" th:text="#{date}" for="date">日期: </label>
                             <input id="date" name="date" type="date" class="form-control" th:placeholder="#{enter_date}" required/>
+<!--                            <div class="invalid-feedback">出生日期非法</div>-->
                         </div>
                     </div>
                 </div>
             </form>
         </div>
         <div class="card-footer text-center">
-            <button id="sub" type="submit" class="btn btn-primary" th:text="#{register}" form="userRegister" disabled>注册</button>
+<!--            <button id="sub" type="submit" class="btn btn-primary" th:text="#{register}" form="userRegister" disabled>注册</button>-->
+            <button id="sub" type="button" class="btn btn-primary" th:text="#{register}" onclick="register()" disabled>注册</button>
         </div>
     </div>
+</div>
+
+<div class="position-fixed bottom-0 end-0" style="margin: 5px 5px;">
+    <div id="alert-toast" class="toast align-items-center text-black bg-light border-0" role="alert">
+        <div class="toast-header bg-danger text-black">
+            <i class="bi bi-exclamation-circle"></i>
+            <strong class="me-auto" style="margin-left: 5px"> 提示</strong>
+            <small class="text-muted">1 seconds ago</small>
+        </div>
+        <div id="toast-body-val" class="toast-body">
+            搜索结果不存在!
+        </div>
+    </div>
+</div>
 </div>
 </body>
 </html>

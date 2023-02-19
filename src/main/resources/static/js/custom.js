@@ -115,7 +115,29 @@ let img_click = function ()
     $("#img").attr("src", "/vercode?" + Math.random());
 }
 
-let checkError = function (tip)
-{
-    $("#" + tip).addClass("is-invalid");
+let register = function () {
+    $.post("register", {name : $("#name").val(),
+            passwd : $("#passwd").val(),
+            email : $("#email").val(),
+            phone : $("#phone").val(),
+            gender : $("#gender").val(),
+            date : $("#date").val()
+        },
+        (data, statusText) => {
+            // console.log(data);
+            if (data.type == "ok")
+            {
+                $(location).attr("href", "/index");
+            }
+            else
+            {
+                $("#toast-body-val").text(data.field + "非法");
+                $("#alert-toast").show();
+
+                setTimeout(function () {
+                    $("#alert-toast").hide();
+                }, 2000);
+            }
+        }
+    )
 }
