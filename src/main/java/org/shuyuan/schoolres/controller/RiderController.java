@@ -36,13 +36,17 @@ public class RiderController
         this.orderService = orderService;
     }
 
+    @CrossOrigin
     @GetMapping("/init_orders")
     @ResponseBody
     public ResponseEntity<List<Order>> init()
     {
+        log.info("收到请求");
         return new ResponseEntity<>(orderService.findOrderByStatus('0'), HttpStatus.OK);
     }
 
+
+    @CrossOrigin
     @GetMapping("/rider_login")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> login(String openId, String name)
@@ -80,12 +84,14 @@ public class RiderController
         }
     }
 
+    @CrossOrigin
     @GetMapping("/accOrder")
     public void accOrder(Integer id, String openid)
     {
         orderService.updateStatusAndRider('1', riderService.findRiderByOpenId(openid).getId(), id);
     }
 
+    @CrossOrigin
     @GetMapping("/completeOrder")
     public void completeOrder(Integer id)
     {

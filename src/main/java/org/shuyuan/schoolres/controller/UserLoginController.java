@@ -68,13 +68,21 @@ public class UserLoginController
     }
 
     @PostMapping("/login")
-    public String login(@Validated User user, String vercode, Locale locale, String remember, HttpServletResponse response,
-                        Model model, Errors error, HttpSession session)
+    public String login(@Validated User user, Errors error, String vercode, Locale locale, String remember, HttpServletResponse response,
+                        Model model, HttpSession session)
     {
         if (error.hasErrors())
         {
-            model.addAttribute("error", error.getObjectName());
-            return "login";
+            if (error.hasFieldErrors("name"))
+            {
+                model.addAttribute("error", "name");
+                return "login";
+            }
+            else if (error.hasFieldErrors("passwd"))
+            {
+                model.addAttribute("error", "passwd");
+                return "login";
+            }
         }
 
         if (!vercode.equals(session.getAttribute("vercode") + ""))
