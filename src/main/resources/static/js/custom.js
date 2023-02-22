@@ -144,6 +144,5 @@ let register = function () {
 
 let checkError = function (tip)
 {
-    console.log(tip);
     $("#" + tip).addClass("is-invalid");
 }
