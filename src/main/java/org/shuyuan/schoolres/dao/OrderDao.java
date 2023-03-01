@@ -2,6 +2,7 @@ package org.shuyuan.schoolres.dao;
 
 import org.shuyuan.schoolres.domain.Order;
 import org.shuyuan.schoolres.domain.Rider;
+import org.shuyuan.schoolres.domain.Shop;
 import org.shuyuan.schoolres.domain.User;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

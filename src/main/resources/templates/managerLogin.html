@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link th:href="@{/webjars/bootstrap/css/bootstrap.css}" type="text/css" rel="stylesheet">
+    <link th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.css}" rel="stylesheet">
+    <link th:href="@{/css/managerLogin.css}" rel="stylesheet">
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.js}" type="text/javascript"></script>
+    <script th:src="@{/webjars/jquery/jquery.js}" type="text/javascript"></script>
+    <script th:src="@{/js/manager.js}" type="text/javascript"></script>
+    <meta http-equiv="content-type" content="text/html" charset="utf-8">
+    <meta name="author" content="树远"/>
+    <title>Welcome</title>
+</head>
+<body th:background="@{schoolres/images/other/managerBack.jpg}" style="background-size: 100%">
+    <div class="container h-100 d-flex flex-row justify-content-center align-items-start">
+        <div class="card mt-5" style="width: 500px">
+            <div class="card-header text-center text-bg-primary">
+                <h3>商家登录</h3>
+            </div>
+            <div class="card-body">
+                <form id="managerForm">
+                    <div class="row mb-2">
+                        <div class="col-sm-3">
+                            <label class="form-label" for="account">账号</label>
+                        </div>
+                        <div class="col-sm-9">
+                            <input id="account" name="account" type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-sm-3">
+                            <label class="form-label" for="passwd">密码</label>
+                        </div>
+                        <div class="col-sm-9">
+                            <input id="passwd" name="passwd" type="password" class="form-control">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-muted text-center">
+                <button type="button" class="btn btn-primary" onclick="login()">登录</button>
+                <button type="reset" form="managerForm" class="btn btn-warning">重设</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

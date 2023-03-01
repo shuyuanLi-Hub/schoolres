@@ -3,6 +3,7 @@ package org.shuyuan.schoolres.service.dishes.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.shuyuan.schoolres.dao.DishesDao;
 import org.shuyuan.schoolres.domain.Dishes;
+import org.shuyuan.schoolres.domain.Shop;
 import org.shuyuan.schoolres.service.dishes.DishesService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -70,5 +71,17 @@ public class DishesServiceImpl implements DishesService
     public List<Dishes> findDishesByNameLikeOrShopLike(String pattern)
     {
          return dao.findDishesByNameLikeOrShopLike(pattern);
+    }
+
+    @Override
+    public List<Dishes> findDishesByShop(Shop shop)
+    {
+        return dao.findDishesByShop(shop);
+    }
+
+    @Override
+    public void deleteDishes(String name)
+    {
+        dao.delete(dao.findDishesByName(name));
     }
 }

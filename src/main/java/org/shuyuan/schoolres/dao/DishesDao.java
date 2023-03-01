@@ -1,6 +1,7 @@
 package org.shuyuan.schoolres.dao;
 
 import org.shuyuan.schoolres.domain.Dishes;
+import org.shuyuan.schoolres.domain.Shop;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -16,6 +17,8 @@ public interface DishesDao extends CrudRepository<Dishes, Integer>, PagingAndSor
     List<Dishes> findDishesByCategory(Integer category);
 
     List<Dishes> findDishesByCategory(Integer category, Pageable page);
+
+    List<Dishes> findDishesByShop(Shop shop);
 
     @Query("select dishes from Dishes dishes where dishes.name like %?1% or dishes.shop in (select shop.id from Shop shop where shop.name like %?1%)")
     List<Dishes> findDishesByNameLikeOrShopLike(String pattern);

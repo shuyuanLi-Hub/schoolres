@@ -12,11 +12,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class DishesDaoTest
 {
     @Autowired
     private DishesDao dao;
+    @Autowired
+    private ShopDao shopDao;
 
     @ParameterizedTest
     @CsvSource({
@@ -65,5 +67,12 @@ public class DishesDaoTest
     public void findDishesByNameLikeOrShopLike(String pattern)
     {
         dao.findDishesByNameLikeOrShopLike(pattern).forEach(System.out::println);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"烧鹅饭"})
+    public void findDishesByShop(String name)
+    {
+        dao.findDishesByShop(shopDao.findShopByName(name)).forEach(System.out::println);
     }
 }

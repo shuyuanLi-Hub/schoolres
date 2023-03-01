@@ -189,6 +189,7 @@ public class JsonCustom
         {
             jsonGenerator.writeStartObject();
             jsonGenerator.writeStringField("name", orderDishes.getDishes().getName());
+            jsonGenerator.writeNumberField("order_id", orderDishes.getOrder().getId());
             jsonGenerator.writeStringField("shop", orderDishes.getShop().getName());
             jsonGenerator.writeNumberField("price", orderDishes.getDishes().getPrice());
             jsonGenerator.writeNumberField("count", orderDishes.getCount());

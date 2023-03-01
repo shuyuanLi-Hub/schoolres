@@ -3,9 +3,12 @@ package org.shuyuan.schoolres.domain;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.UniqueElements;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -20,7 +23,7 @@ public class Dishes
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "dishes_name")
+    @Column(name = "dishes_name", unique = true)
     @NotBlank
     private String name;
 
@@ -37,6 +40,9 @@ public class Dishes
     @Column(name = "dishes_category")
     private Integer category;
 
+    @Transient
+    private MultipartFile cover;
+
     @Column(name = "dishes_photo")
     private String photo;
 
@@ -48,6 +54,14 @@ public class Dishes
     public Dishes(Integer id)
     {
         this.id = id;
+    }
+
+    public Dishes(String name, String desc, Double price, MultipartFile cover)
+    {
+        this.name = name;
+        this.description = desc;
+        this.price = price;
+        this.cover = cover;
     }
 
     public Dishes(Integer id, String name, String description, Double price, Integer category, String photo, Shop shop)

@@ -10,11 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @Slf4j
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class OrderDishesTest
 {
     @Autowired
     private OrderDishesDao dao;
+
+    @Autowired
+    private ShopDao shopDao;
 
     @Test
     public void findAll()
@@ -25,7 +28,7 @@ public class OrderDishesTest
     @Test
     public void findOrderDishsByShop()
     {
-        System.out.println(dao.findOrderDishesByShop(new Shop(1)));
+        System.out.println(dao.findOrderDishesByShop(shopDao.findShopByName("港式卤肉饭")));
     }
 
     @ParameterizedTest

@@ -28,6 +28,12 @@ public class Shop
     @JoinColumn(name = "shop_owner", referencedColumnName = "host_id")
     private Host host;
 
+    @Column(name = "shop_account")
+    private String account;
+
+    @Column(name = "shop_passwd")
+    private String passwd;
+
     @OneToMany(targetEntity = Dishes.class, mappedBy = "shop", fetch = FetchType.EAGER)
     private List<Dishes> dishes;
 
@@ -39,6 +45,11 @@ public class Shop
     public Shop(Integer id)
     {
         this.id = id;
+    }
+
+    public Shop(String name)
+    {
+        this.name = name;
     }
 
     public Shop(String name, Integer category)
@@ -62,6 +73,17 @@ public class Shop
         this.name = name;
         this.category = category;
         this.host = host;
+    }
+
+    public Shop(String name, Integer category, Host host, String account, String passwd, List<Dishes> dishes, List<Order.OrderDishes> orderDishes)
+    {
+        this.name = name;
+        this.category = category;
+        this.host = host;
+        this.account = account;
+        this.passwd = passwd;
+        this.dishes = dishes;
+        this.orderDishes = orderDishes;
     }
 
     @Override
