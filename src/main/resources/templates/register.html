@@ -13,9 +13,9 @@
 <body th:background="@{/images/background.png}" style="margin-top: 80px; background-size: 100%">
 <nav class="navbar navbar-expand fixed-top justify-content-around" style="background-color: #e3f2fd;">
     <div class="container-fluid">
-        <a class="navbar-brand" href="login.html"><img th:src="@{/schoolres/images/other/shu-logo.png}" style="height: 50px"></a>
+        <a class="navbar-brand" th:href="@{/#}"><img th:src="@{/schoolres/images/other/shu-logo.png}" style="height: 50px"></a>
         <ul class="navbar-nav">
-            <a class="btn btn-primary" th:text="#{login}" th:href="@{/add_user}">登录</a>
+            <a class="btn btn-primary" th:text="#{login}" th:href="@{/user/add_user}">登录</a>
         </ul>
     </div>
 </nav>

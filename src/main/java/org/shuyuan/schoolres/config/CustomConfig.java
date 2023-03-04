@@ -1,9 +1,13 @@
 package org.shuyuan.schoolres.config;
 
+import lombok.extern.slf4j.Slf4j;
+import org.shuyuan.schoolres.interceptor.AccessInterceptor;
+import org.shuyuan.schoolres.interceptor.AllInterceptor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -14,8 +18,11 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
+@Slf4j
 @Configuration
 public class CustomConfig implements WebMvcConfigurer
 {
@@ -27,6 +34,15 @@ public class CustomConfig implements WebMvcConfigurer
 
     @Value("${shuyuan.locale.param.name}")
     private String localeParam;
+
+    private AccessInterceptor accessInterceptor;
+
+    private List<String> paths = List.of("/user/getHistory", "/user/getOrders", "/user/initial", "/orderOver/**", "/user/signOut");
+
+    public CustomConfig(AccessInterceptor accessInterceptor)
+    {
+        this.accessInterceptor = accessInterceptor;
+    }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry)
@@ -69,8 +85,12 @@ public class CustomConfig implements WebMvcConfigurer
     @Override
     public void addInterceptors(InterceptorRegistry registry)
     {
+
         // 添加确定Locale的拦截器
         registry.addInterceptor(localeChangeInterceptor());
+        registry.addInterceptor(new AllInterceptor())
+                .addPathPatterns("/**")
+                .excludePathPatterns(paths);
+        registry.addInterceptor(accessInterceptor).addPathPatterns(paths);
     }
-
 }

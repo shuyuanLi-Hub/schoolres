@@ -1,8 +1,11 @@
 package org.shuyuan.schoolres.service.order;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.shuyuan.schoolres.domain.Order;
 import org.shuyuan.schoolres.domain.Rider;
 import org.shuyuan.schoolres.domain.User;
+import org.springframework.amqp.core.AmqpAdmin;
+import org.springframework.amqp.core.AmqpTemplate;
 
 import java.util.List;
 import java.util.Map;
@@ -26,4 +29,6 @@ public interface OrderService
     List<Order> findOrderByUserAndStatusNotIn(String name, List<Character> statuses);
 
     Order findOrderById(Integer id);
+
+    void orderOver(AmqpAdmin amqpAdmin, AmqpTemplate template, List<Map<String, String>> message) throws JsonProcessingException;
 }

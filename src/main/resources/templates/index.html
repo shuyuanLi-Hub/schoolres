@@ -25,7 +25,7 @@
                 <img th:src="@{/schoolres/images/other/shu-logo.png}" style="height: 50px"/>
             </a>
             <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                <li><a th:href="@{index}" class="nav-link px-2" th:text="#{home}">主页</a></li>
+                <li><a th:href="@{/}" class="nav-link px-2" th:text="#{home}">主页</a></li>
                 <li><a href="#" class="nav-link px-2" data-bs-toggle="offcanvas" role="button" data-bs-target="#history" th:text="#{history}" >历史</a></li>
                 <div class="offcanvas offcanvas-start" id="history">
                     <div class="offcanvas-header">
@@ -115,7 +115,7 @@
             </form>
 
             <div id="login_and_register" class="text-end">
-                <a th:href="@{/login}" class="btn btn-outline-primary" th:text="#{login}">登录</a>
+                <a th:href="@{/user/login}" class="btn btn-outline-primary" th:text="#{login}">登录</a>
                 <a th:href="@{/register}" class="btn btn-warning" th:text="#{register}">注册</a>
             </div>
         </div>
@@ -423,7 +423,7 @@
         <!-- 购物车 -->
         <div>
             <!-- cart -->
-            <button id="cart" class="btn btn-outline-primary mt-3 h-25" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" style="margin-right: 10px" data-count="0">
+            <button id="cart" class="btn btn-outline-primary position-fixed mt-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" style="margin-right: 10px" data-count="0">
                 <i class="bi bi-cart-check"></i>
             </button>
 

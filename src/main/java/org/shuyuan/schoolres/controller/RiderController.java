@@ -1,25 +1,20 @@
 package org.shuyuan.schoolres.controller;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.TypeReference;
-import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.mapping.Collection;
 import org.shuyuan.schoolres.domain.Order;
 import org.shuyuan.schoolres.domain.Rider;
 import org.shuyuan.schoolres.service.order.OrderService;
-import org.shuyuan.schoolres.service.orderDishes.OrderDishesService;
 import org.shuyuan.schoolres.service.rider.RiderService;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @RestController

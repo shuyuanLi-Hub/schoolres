@@ -1,5 +1,8 @@
 package org.shuyuan.schoolres.domain;
 
+import com.alibaba.fastjson2.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -42,18 +45,22 @@ public class User
     @Email
     @Column(name = "user_email")
     private String email;
+
     @Column(name = "user_gender")
     private Character gender;
 
     @Column(name = "user_photo", insertable = false)
     private String photo;
 
+//    @JsonIgnore
     @OneToMany(targetEntity = Address.class, mappedBy = "user")
     private List<Address> addresses;
 
+    @JsonIgnore
     @OneToMany(targetEntity = Order.class, mappedBy = "user")
     private List<Order> orders;
 
+    @JsonIgnore
     @OneToMany(targetEntity = Message.class, mappedBy = "user")
     private List<Message> messages;
 

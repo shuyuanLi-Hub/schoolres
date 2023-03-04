@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link th:href="@{/webjars/bootstrap/css/bootstrap.css}" type="text/css" rel="stylesheet">
+    <link th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.css}" rel="stylesheet">
+    <link th:href="@{/css/manager.css}" rel="stylesheet">
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.js}" type="text/javascript"></script>
+    <script th:src="@{/webjars/jquery/jquery.js}" type="text/javascript"></script>
+    <script th:src="@{/webjars/bs-custom-file-input/dist/bs-custom-file-input.js}" type="text/javascript"></script>
+    <script th:src="@{/js/manager.js}" type="text/javascript"></script>
+    <meta http-equiv="content-type" content="text/html" charset="utf-8">
+    <meta name="author" content="树远"/>
+    <title>Welcome</title>
+    <script type="javascript">
+        $(function () {
+            bsCustomFileInput.init();
+        })
+    </script>
+</head>
+<body>
+    <div class="container-fluid h-100"  style="display: flex; flex-wrap: nowrap">
+        <div class="view-super">
+            <div class="order-title">
+                <span id="shop-name" class="order-title-text" th:text="${shop}"></span>
+                <button type="button" class="btn btn-warning" style="height: 80%; margin: 8px 2px" onclick="getOrders()"><i class="bi bi-arrow-clockwise"></i></button>
+            </div>
+            <div class="view-sub-view">
+                <div class="sub-tag-view">
+                    <div class="sub-tag">
+<!--                        <div class="center-sty">-->
+<!--                            <div style="border: 1px solid blue">25单</div>-->
+                            <span></span>
+                            <div class="sub-tag-sub">订单总数</div>
+<!--                        </div>-->
+                    </div>
+                    <div class="sub-tag">
+                        <span></span>
+                        <span class="sub-tag-sub text-danger">取消订单</span>
+                    </div>
+                    <div class="sub-tag">
+                        <span><span></span><i class="bi-currency-yen"></i></span>
+                        <span class="sub-tag-sub">订单金额</span>
+                    </div>
+                </div>
+                <div class="sco-view">
+                    <ul id="orders-item" class="list-group">
+<!--                        <li class="list-group-item disabled" aria-disabled="true">-->
+<!--                            <div>-->
+<!--                                <div style="display: flex; flex-wrap: nowrap; justify-content: space-between">-->
+<!--                                    <h4><u>#33</u></h4>-->
+<!--                                    <h4><span class="badge text-bg-primary">已完成</span></h4>-->
+<!--                                </div>-->
+
+<!--                                <div class="order-item-view">-->
+<!--                                    <div class="order-item">-->
+<!--                                        <img th:src="@{/schoolres/images/dishes_one_four.jpg}" class="order-item-img">-->
+<!--                                        <span class="order-item-text">-->
+<!--                                            天龙汤-->
+<!--                                            <i class="bi bi-x"></i>-->
+<!--                                            <span class="badge bg-danger">3</span>-->
+<!--                                        </span>-->
+<!--                                    </div>-->
+<!--                                    <div class="order-item">-->
+<!--                                        <img th:src="@{/schoolres/images/dishes_one_four.jpg}" class="order-item-img">-->
+<!--                                        <span class="order-item-text">-->
+<!--                                            天龙汤-->
+<!--                                            <i class="bi bi-x"></i>-->
+<!--                                            <span class="badge bg-danger">3</span>-->
+<!--                                        </span>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--&lt;!&ndash;                                <hr style="border: 1px solid black">&ndash;&gt;-->
+<!--                                <div class="order-mess-view">-->
+<!--                                    <span>完成时间: 2023/2/20</span>-->
+<!--                                    <span>用户电话: 19537814593</span>-->
+<!--                                    <span>总价: 20<i class="bi-currency-yen"></i></span>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </li>-->
+<!--                        <li class="list-group-item disabled" aria-disabled="true">-->
+<!--                            <div>-->
+<!--                                <div style="display: flex; flex-wrap: nowrap; justify-content: space-between">-->
+<!--                                    <h4><u>#33</u></h4>-->
+<!--                                    <h4><span class="badge text-bg-primary">已完成</span></h4>-->
+<!--                                </div>-->
+
+<!--                                <div class="order-item-view">-->
+<!--                                    <div class="order-item">-->
+<!--                                        <img th:src="@{/schoolres/images/dishes_one_four.jpg}" class="order-item-img">-->
+<!--                                        <span class="order-item-text">-->
+<!--                                            天龙汤-->
+<!--                                            <i class="bi bi-x"></i>-->
+<!--                                            <span class="badge bg-danger">3</span>-->
+<!--                                        </span>-->
+<!--                                    </div>-->
+<!--                                    <div class="order-item">-->
+<!--                                        <img th:src="@{/schoolres/images/dishes_one_four.jpg}" class="order-item-img">-->
+<!--                                        <span class="order-item-text">-->
+<!--                                            天龙汤-->
+<!--                                            <i class="bi bi-x"></i>-->
+<!--                                            <span class="badge bg-danger">3</span>-->
+<!--                                        </span>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--&lt;!&ndash;                                <hr style="border: 1px solid black">&ndash;&gt;-->
+<!--                                <div class="order-mess-view">-->
+<!--                                    <span>完成时间: 2023/2/20</span>-->
+<!--                                    <span>用户电话: 19537814593</span>-->
+<!--                                    <span>总价: 20<i class="bi-currency-yen"></i></span>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </li>-->
+<!--                        <li class="list-group-item disabled" aria-disabled="true">-->
+<!--                            <div>-->
+<!--                                <div style="display: flex; flex-wrap: nowrap; justify-content: space-between">-->
+<!--                                    <h4><u>#33</u></h4>-->
+<!--                                    <h4><span class="badge text-bg-primary">已完成</span></h4>-->
+<!--                                </div>-->
+
+<!--                                <div class="order-item-view">-->
+<!--                                    <div class="order-item">-->
+<!--                                        <img th:src="@{/schoolres/images/dishes_one_four.jpg}" class="order-item-img">-->
+<!--                                        <span class="order-item-text">-->
+<!--                                            天龙汤-->
+<!--                                            <i class="bi bi-x"></i>-->
+<!--                                            <span class="badge bg-danger">3</span>-->
+<!--                                        </span>-->
+<!--                                    </div>-->
+<!--                                    <div class="order-item">-->
+<!--                                        <img th:src="@{/schoolres/images/dishes_one_four.jpg}" class="order-item-img">-->
+<!--                                        <span class="order-item-text">-->
+<!--                                            天龙汤-->
+<!--                                            <i class="bi bi-x"></i>-->
+<!--                                            <span class="badge bg-danger">3</span>-->
+<!--                                        </span>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--&lt;!&ndash;                                <hr style="border: 1px solid black">&ndash;&gt;-->
+<!--                                <div class="order-mess-view">-->
+<!--                                    <span>完成时间: 2023/2/20</span>-->
+<!--                                    <span>用户电话: 19537814593</span>-->
+<!--                                    <span>总价: 20<i class="bi-currency-yen"></i></span>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </li>-->
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="view-super h-100" style="width: 70%; margin-left: 2px">
+            <ul class="nav nav-pills mb-3 justify-content-between bg-light" id="pills-tab" role="tablist">
+                <div style="display: flex; flex-wrap: nowrap; align-items: center">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#addDishes" type="button" role="tab" aria-controls="pills-home" aria-selected="true">添加</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#dishesList" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">仓库</button>
+                    </li>
+                </div>
+                <li class="nav-item" role="presentation">
+                    <img th:src="@{/schoolres/images/other/shu-logo.png}" class="nav-img">
+                </li>
+            </ul>
+
+            <div class="tab-content" style="height: 90%; margin-bottom: 0px; padding-bottom: 0px" id="myTabContent">
+                <div class="tab-pane fade show active" id="addDishes" role="tabpanel" aria-labelledby="home-tab">
+                    <div class="container">
+                        <form id="dishesForm" enctype="multipart/form-data">
+                            <div class="row mb-2">
+                                <div class="col-sm-3">
+                                    <label for="name" class="form-label">菜名: </label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input id="name" name="name" type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-3">
+                                    <label for="desc" class="form-label">描述: </label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input id="desc" name="desc" type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-3">
+                                    <label for="price" class="form-label">价格: </label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input id="price" name="price" type="number" class="form-control">
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-3">
+                                    <label for="cover" class="form-label">封面: </label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input id="cover" name="cover" type="file" class="form-control">
+                                    <input id="shop" name="shop" type="text" hidden value="烧鹅饭">
+                                    <input id="category" name="category" type="number" hidden value="1">
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-6 text-end">
+                                    <button type="button" class="btn btn-primary" th:text="#{submit}" onclick="addDishes()">提交</button>
+                                </div>
+                                <div class="col-sm-6">
+                                    <button type="reset" class="btn btn-warning">重设</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="tab-pane fade w-auto h-100" id="dishesList" role="tabpanel" aria-labelledby="profile-tab">
+                    <div id="dishes_list" class="row-sup-view h-100 w-100">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--toast提示-->
+    <div class="position-fixed bottom-0 end-0" style="margin: 5px 5px;">
+        <div id="alert-toast" class="toast align-items-center text-bg-light border-0" role="alert">
+            <div class="toast-header bg-danger text-black">
+                <i class="bi bi-exclamation-circle"></i>
+                <strong class="me-auto" style="margin-left: 5px"> 提示</strong>
+                <small class="text-muted">1 seconds ago</small>
+            </div>
+            <div class="toast-body">
+                搜索结果不存在!
+            </div>
+        </div>
+    </div>
+    </div>
+    <!--toast提示-->
+
+    <!--dishesModel-->
+    <div id="dishesModal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header text-bg-primary">
+                    <h5 class="modal-title">西湖醋鱼</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="modalForm" enctype="multipart/form-data">
+                        <div class="row mb-2">
+                            <a onclick="showImg()"><img id="modalImg" th:src="@{/schoolres/images/dishes_one_four.jpg}" class="modal-img"></a>
+                            <input type="file" id="modalCover" name="cover" class="d-none" value="">
+                            <div class="invalid-feedback">上传文件大小不能超过2MB!</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="input-group mb-2">
+                                <span class="input-group-text">菜名</span>
+<!--                                <input id="originName" name="originName" type="text" hidden>-->
+                                <input id="dishesName" name="name" maxlength="20" type="text" class="form-control" oninput="resetInput($(this))">
+                                <div id="dishesNameFeed" class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="input-group mb-2">
+                                <span class="input-group-text">价格</span>
+                                <input id="dishesPrice" name="price" min="0" max="1000" type="number" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="input-group mb-2">
+                                <span class="input-group-text">描述</span>
+                                <input id="dishesDesc" name="description" maxlength="100" type="text" class="form-control">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer bg-light d-flex flex-row justify-content-center">
+                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal" onclick="deleteDishes()">删除</button>
+                    <button type="button" class="btn btn-outline-warning" onclick="updateDishes()">修改</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--dishesModel-->
+
+</body>
+</html>

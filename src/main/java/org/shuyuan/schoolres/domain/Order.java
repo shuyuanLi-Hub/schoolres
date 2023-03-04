@@ -131,7 +131,7 @@ public class Order
         return "Order{" +
                 "id=" + id +
                 ", date=" + date +
-                ", user=" + user.getName() +
+//                ", user=" + user.getName() +
 //                ", rider=" + rider.getName() +
                 ", dishes=" + dishes.toString() +
                 '}';

@@ -112,11 +112,11 @@ let phoneV = function ()
 
 let img_click = function ()
 {
-    $("#img").attr("src", "/vercode?" + Math.random());
+    $("#img").attr("src", "/user/verifyCode?" + new Date().getTime());
 }
 
 let register = function () {
-    $.post("register", {name : $("#name").val(),
+    $.post("/user/register", {name : $("#name").val(),
             passwd : $("#passwd").val(),
             email : $("#email").val(),
             phone : $("#phone").val(),
@@ -145,4 +145,23 @@ let register = function () {
 let checkError = function (tip)
 {
     $("#" + tip).addClass("is-invalid");
+}
+
+let pro_login = function () {
+
+    $.ajax({
+        url : "/user/proLogin",
+        type : "post",
+        data : $("form#user-form").serializeArray(),
+    }).done(function (data) {
+        $(location).attr("href", "/user/index");
+    }).fail(function (data) {
+        let toast = $("#user-login-toast");
+        toast.find(".toast-body").text(data.responseText);
+        toast.show();
+
+        setTimeout(function () {
+            toast.hide();
+        }, 1000);
+    })
 }

@@ -10,7 +10,7 @@ let webSocket;
 // let messCount = 0;
 
 let initial = function () {
-    $.getJSON("initial", function (data, statusText) {
+    $.getJSON("/user/initial", function (data, statusText) {
 
         user = data;
 
@@ -56,12 +56,12 @@ let sign_out = function () {
     let parent = $("#user-header").parent();
     $("#user-header").remove();
 
-    $.ajax("/signOut", {method : 'delete'});
+    $.ajax("/user/signOut", {method : 'delete'});
 
     // location.reload();
 
     parent.append("<div id=\"login_and_register\" class=\"text-end\">\n" +
-        "                <a href=\"/login\" class=\"btn btn-outline-primary\" th:text=\"#{login}\">登录</a>\n" +
+        "                <a href=\"/user/login\" class=\"btn btn-outline-primary\" th:text=\"#{login}\">登录</a>\n" +
         "                <a href=\"/register\" class=\"btn btn-warning\" th:text=\"#{register}\">注册</a>\n" +
         "            </div>");
 }
@@ -76,7 +76,7 @@ let setting_address = function () {
 
     $("#address").next("div").next("div").children("button:last").removeAttr("disabled");
 
-    $.post("setAddress", {address : value, id : user.id});
+    $.post("/setAddress", {address : value, id : user.id});
 
     $("input[name='address']").val("");
     $("#address").children().text(value);

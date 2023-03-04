@@ -12,7 +12,7 @@
 <body th:background="@{/images/background.png}" style="margin-top: 80px; background-size: 100%" th:onload="checkError([[${error}]])">
 <nav class="navbar navbar-expand fixed-top justify-content-around" style="background-color: #e3f2fd;">
     <div class="container-fluid">
-        <a class="navbar-brand" href="login.html"><img th:src="@{/schoolres/images/other/shu-logo.png}" style="height: 50px"></a>
+        <a class="navbar-brand" th:href="@{/#}"><img th:src="@{/schoolres/images/other/shu-logo.png}" style="height: 50px"></a>
         <ul class="navbar-nav">
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button"
@@ -20,8 +20,8 @@
                     选择语言
                 </a>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" th:href="@{/login?choseLang=zh_CN}" th:text="#{'chinese'}">简体中文</a></li>
-                    <li><a class="dropdown-item" th:href="@{/login?choseLang=en_US}" th:text="#{'english'}">美式英语</a></li>
+                    <li><a class="dropdown-item" th:href="@{/user/login?choseLang=zh_CN}" th:text="#{'chinese'}">简体中文</a></li>
+                    <li><a class="dropdown-item" th:href="@{/user/login?choseLang=en_US}" th:text="#{'english'}">美式英语</a></li>
                 </ul>
             </li>
             <a th:href="@{/register}" th:text="#{register}" class="btn btn-primary">注册</a>
@@ -34,15 +34,16 @@
             <h3 class="text-white">校园点餐平台-登录</h3>
         </div>
         <div class="card-body">
-            <form th:action="@{/login}" method="post" id="user-form">
+<!--            <form th:action="@{/login}" method="post" id="user-form">-->
+            <form id="user-form">
                 <!-- name -->
                 <label for="name" class="small" th:text="#{'enter_username'}">请输入用户名: </label>
                 <div class="input-group mb-3">
                     <span class="input-group-text"><img th:src="@{/images/user.png}"/></span>
                     <input id="name" name="name" type="text" required autofocus
                            class="form-control" th:placeholder="#{'username'}" oninput="change()"/>
-                    <div class="invalid-feedback" th:unless="${error_mess != null}" th:text="#{username_invalid_feedback}">用户名非法</div>
-                    <div class="invalid-feedback" th:if="${error_mess != null}" th:text="#{input_name_error}">用户名不存在</div>
+                    <div id="name-feedback" class="invalid-feedback" th:text="#{username_invalid_feedback}"></div>
+<!--                    <div class="invalid-feedback" th:if="${error_mess != null}" th:text="#{input_name_error}">用户名不存在</div>-->
                 </div>
 
                 <!-- passwd -->
@@ -51,19 +52,19 @@
                     <span class="input-group-text"><img th:src="@{/images/passwd.png}"/></span>
                     <input id="passwd" name="passwd" type="password" required
                            class="form-control" th:placeholder="#{'password'}" oninput="passwdChange()"/>
-                    <div class="invalid-feedback" th:unless="${error_mess != null}" th:text="#{password_invalid_feedback}">密码不符合要求</div>
-                    <div class="invalid-feedback" th:if="${error_mess != null}" th:text="#{input_passwd_error}">密码错误</div>
+                    <div id="passwd-feedback" class="invalid-feedback" th:text="#{password_invalid_feedback}"></div>
+<!--                    <div class="invalid-feedback" th:if="${error_mess != null}" th:text="#{input_passwd_error}">密码错误</div>-->
                 </div>
 
-                <!-- vercode -->
-                <label for="vercode" class="small" th:text="#{'enter_vercode'}">请输入验证码: </label>
+                <!-- verifyCode -->
+                <label for="verifyCode" class="small" th:text="#{'enter_vercode'}">请输入验证码: </label>
                 <div class="input-group mb-3">
                     <span class="input-group-text"><img th:src="@{/images/vercode.png}"/></span>
-                    <input id="vercode" name="vercode" type="text" minlength="6" maxlength="6"
-                           oninput="javascript: $('#vercode').removeClass('is-invalid')"
+                    <input id="verifyCode" name="verifyCode" type="text" minlength="6" maxlength="6"
+                           oninput="javascript: $('#verifyCode').removeClass('is-invalid')"
                            class="form-control" th:placeholder="#{'vercode'}"/>
                     <span class="input-group-text">
-                        <img id="img" th:src="@{/vercode}" class="rounded img-fluid" onclick="img_click()"/>
+                        <img id="img" th:src="@{/user/verifyCode}" class="rounded img-fluid" onclick="img_click()"/>
                     </span>
                     <div class="invalid-feedback" th:text="#{vercode_invalid_feedback}">验证码格式错误</div>
                 </div>
@@ -82,10 +83,28 @@
             </form>
         </div>
         <div class="card-footer text-center">
-            <button id="sub" type="submit" class="btn btn-primary" th:text="#{'login'}" form="user-form" disabled>登录</button>
+            <button id="sub" type="button" class="btn btn-primary" th:text="#{'login'}" onclick="pro_login()" disabled>登录</button>
         </div>
     </div>
 </div>
+
+
+<!--<div id="user-toast-view" class="toast-container position-fixed bottom-0 end-0 p-3 m-2">-->
+
+<!--</div>-->
+<!--toast提示-->
+<div class="position-fixed bottom-0 end-0" style="margin: 5px 5px;">
+    <div id="user-login-toast" class="toast align-items-center text-bg-light border-0" role="alert">
+        <div class="toast-header bg-danger text-black">
+            <i class="bi bi-exclamation-circle"></i>
+            <strong class="me-auto" style="margin-left: 5px"> 提示</strong>
+            <small class="text-muted">1 seconds ago</small>
+        </div>
+        <div class="toast-body">
+        </div>
+    </div>
+</div>
+<!--toast提示-->
 
 <div class="modal" id="user_modal">
     <div class="modal-dialog">

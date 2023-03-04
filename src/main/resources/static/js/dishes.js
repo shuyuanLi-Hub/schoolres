@@ -12,7 +12,7 @@ $(function (){
 });
 
 let get_json = function (type) {
-    $.getJSON("get_dishes", {type : type}, function (data, statusText) {
+    $.getJSON("/get_dishes", {type : type}, function (data, statusText) {
 
         for (let i in data)
         {
@@ -203,7 +203,7 @@ let plus_and_reduce = function (tag_id) {
 }
 
 let init_dishes = function (category, node_name) {
-    $.getJSON("init_dishes", {category : category, node_name : node_name}, function (data, statusText) {
+    $.getJSON("/init_dishes", {category : category, node_name : node_name}, function (data, statusText) {
         let node = $("#" + node_name);
         let row;
 
@@ -269,7 +269,7 @@ let search_offcanvas = function (obj) {
     }
     let nodes = $("body").children("div")
 
-    $.getJSON("search_dishes", {pattern : value}, function (data, statusText) {
+    $.getJSON("/user/search_dishes", {pattern : value}, function (data, statusText) {
 
         if (data.length == 0)
         {
@@ -409,13 +409,21 @@ let over_order = function () {
             $("#cart_list_group").children().each(function () {
                 let item_count = $(this).children("div:first").find("smal>span").text();
                 let shop = $(this).children("div:last").children("div:first").find("span>span").text();
-                data_list.push({id : $(this).attr("id"), count : item_count, shop : shop, address : addr, remark : remark.val()});
+                // data_list.push({id : $(this).attr("id"), count : item_count, shop : shop, address : addr, remark : remark.val()});
+                data_list.push({id : $(this).attr("id"), count : item_count, shop : shop});
             })
-
+            let remark_val = remark.val();
             remark.val("");
             clear_all();
             $("#orderOver").modal("hide");
-            $.ajax({url : "orderOver", type : "POST", data : JSON.stringify(data_list), contentType : "application/json;charset=utf-8"});
+            $.ajax({
+                url : "/orderOver/" + addr + ";remark=" + remark_val,
+                type : "POST",
+                // data : JSON.stringify(data_list),
+                // data : {orders : {orders : data_list, remark : remark.val(), address : addr}},
+                data : JSON.stringify(data_list),
+                contentType : "application/json;charset=utf-8"
+            });
         }, 5000)
     })
 
@@ -425,44 +433,31 @@ let over_order = function () {
 
     $("#orderOver").on("show.bs.modal", function () {
         time = setTimeout(function () {
-            // console.log("开始计时");
+            console.log("开始计时");
             let data_list = new Array();
 
             $("#cart_list_group").children().each(function () {
                 let item_count = $(this).children("div:first").find("smal>span").text();
                 let shop = $(this).children("div:last").children("div:first").find("span>span").text();
-                data_list.push({id : $(this).attr("id"), count : item_count, shop : shop, address : addr});
+                // data_list.push({id : $(this).attr("id"), count : item_count, shop : shop, address : addr});
+                data_list.push({id : $(this).attr("id"), count : item_count, shop : shop});
             })
 
             clear_all();
+            $("#orderOver").modal("hide");
 
-            $.ajax({url : "orderOver", type : "POST", data : JSON.stringify(data_list), contentType : "application/json;charset=utf-8"});
+            $.ajax({
+                url : "/orderOver/" + addr,
+                type : "POST",
+                // data : JSON.stringify(data_list),
+                // data : {orders : {orders : data_list, remark : remark.val(), address : addr}},
+                data : JSON.stringify(data_list),
+                contentType : "application/json;charset=utf-8"
+            });
         }, 5000)
     })
     $("#orderOver").modal("show");
-
 }
-
-// let order_over = function () {
-//     let addr = $("#address").children().text()
-//
-//     if (addr == undefined || addr == '')
-//     {
-//         return;
-//     }
-//
-//     let data_list = new Array();
-//
-//     $("#cart_list_group").children().each(function () {
-//         let item_count = $(this).children("div:first").find("smal>span").text();
-//         let shop = $(this).children("div:last").children("div:first").find("span>span").text();
-//         data_list.push({id : $(this).attr("id"), count : item_count, shop : shop, address : addr});
-//     })
-//
-//     clear_all();
-//
-//     $.ajax({url : "orderOver", type : "POST", data : JSON.stringify(data_list), contentType : "application/json;charset=utf-8"});
-// }
 
 let modalShow = function (order_id, rider) {
     $("#chatMess").next("button").data("data-order-id", order_id);
@@ -475,122 +470,246 @@ let modalShow = function (order_id, rider) {
 let showOrders = function () {
     $("#orderList").children().remove();
 
-    $.getJSON("getOrders", function (data, statusText) {
-        if (statusText == "success")
+    $.ajax({
+        url : "/user/getOrders",
+        type : "get"
+    }).done(function (data) {
+        let orders = $("#orderList");
+
+        for (let index in data)
         {
-            let orders = $("#orderList");
-            // console.log(data);
+            // let dishes = index.dishes;
 
-            for (let index in data)
+            orders.append("<li id='" + data[index].id + "' class=\"list-group-item\">\n" +
+                "                                <div class=\"order-title-sty\">\n" +
+                "                                    <h5>" + data[index].dishes[0].shopName + "</h5>\n" +
+                "                                    <h5>#" + data[index].id + "</h5>\n" +
+                "                                </div>\n" +
+                "                                <div id='orderListItems'></div>" +
+                "                                <hr style=\"border: 1px solid grey; margin-bottom: 0\">\n" +
+                "                            </li>");
+
+            let count = priceCount = 0;
+            let dishes = data[index].dishes;
+            let status = data[index].status;
+
+            for (let i in dishes)
             {
-                // let dishes = index.dishes;
+                count += dishes[i].count;
+                priceCount += dishes[i].price * dishes[i].count;
 
-                orders.append("<li id='" + data[index].id + "' class=\"list-group-item\">\n" +
-                    "                                <div class=\"order-title-sty\">\n" +
-                    "                                    <h5>" + data[index].dishes[0].shopName + "</h5>\n" +
-                    "                                    <h5>#" + data[index].id + "</h5>\n" +
-                    "                                </div>\n" +
-                    "                                <div id='orderListItems'></div>" +
-                    "                                <hr style=\"border: 1px solid grey; margin-bottom: 0\">\n" +
-                    "                            </li>");
+                $("#orderList>#" + data[index].id + ">#orderListItems").append("<div class=\"order-view\">\n" +
+                    "                                        <div>\n" +
+                    "                                            <div class=\"order-dishes-view\">\n" +
+                    "                                                <img src='" + "/schoolres/images/" + dishes[i].photo + "' class=\"order-dishes-img\">\n" +
+                    "                                                <div class=\"order-dishes-text-view\">\n" +
+                    "                                                    <div style=\"display: flex; justify-content: space-between\">\n" +
+                    "                                                        <span>" + dishes[i].dishesName + "</span>\n" +
+                    "                                                    </div>\n" +
+                    "\n" +
+                    "                                                    <div class=\"order-dishes-text-view-sub\">\n" +
+                    "                                                        <div>\n" +
+                    "                                                            <span class=\"badge rounded-pill bg-warning\" style=\"margin-right: 5px\">商家描述:</span>\n" +
+                    "                                                        </div>\n" +
+                    "\n" +
+                    "                                                        <div style=\"border-bottom: 1px solid lightblue;\">\n" +
+                    "                                                            <span style=\"font-weight: lighter; font-size: small\" class='nowrap'>" + dishes[i].desc + "</span>\n" +
+                    "                                                        </div>\n" +
+                    "                                                    </div>\n" +
+                    "\n" +
+                    "                                                </div>\n" +
+                    "                                            </div>\n" +
+                    "                                            <div class=\"order-info-view\">\n" +
+                    "                                                <div class=\"order-info-item\">\n" +
+                    "                                                    <span>单价: </span>\n" +
+                    "                                                    <span>" + dishes[i].price + " <i class=\"bi bi-currency-yen\"></i></span>\n" +
+                    "                                                </div>\n" +
+                    "                                                <div class=\"order-info-item\">\n" +
+                    "                                                    <span>数量: </span>\n" +
+                    "                                                    <span>" + dishes[i].count + "</span>\n" +
+                    "                                                </div>\n" +
+                    "                                            </div>\n" +
+                    "                                        </div>\n" +
+                    "                                    </div>")
+            }
 
-                let count = priceCount = 0;
-                let dishes = data[index].dishes;
-                let status = data[index].status;
+            if (status == "0")
+            {
+                $("#orderList>#" + data[index].id).append("<div class=\"order-info-full-view\">\n" +
+                    "                                    <div class=\"order-info-item\">\n" +
+                    "                                        <span>总价: </span>\n" +
+                    "                                        <span>" + priceCount + " <i class=\"bi bi-currency-yen\"></i></span>\n" +
+                    "                                    </div>\n" +
+                    "                                    <div class=\"order-info-item\">\n" +
+                    "                                        <span>数量: </span>\n" +
+                    "                                        <span>" + count + "</span>\n" +
+                    "                                    </div>\n" +
+                    "                                    <div class=\"order-info-item\">\n" +
+                    "                                        <span>餐具: </span>\n" +
+                    "                                        <span>2 份</span>\n" +
+                    "                                    </div>\n" +
+                    "                                    <div class=\"order-info-item\">\n" +
+                    "                                        <span>配送状态: </span>\n" +
+                    "                                        <span>未分配骑手</span>\n" +
+                    "                                    </div>\n" +
+                    "                                </div>");
+            }
+            else if (status == "1")
+            {
+                let node = $("<div class=\"order-info-full-view\">\n" +
+                    "                                    <div class=\"order-info-item\">\n" +
+                    "                                        <span>总价: </span>\n" +
+                    "                                        <span>" + priceCount + " <i class=\"bi bi-currency-yen\"></i></span>\n" +
+                    "                                    </div>\n" +
+                    "                                    <div class=\"order-info-item\">\n" +
+                    "                                        <span>数量: </span>\n" +
+                    "                                        <span>" + count + "</span>\n" +
+                    "                                    </div>\n" +
+                    "                                    <div class=\"order-info-item\">\n" +
+                    "                                        <span>餐具: </span>\n" +
+                    "                                        <span>2 份</span>\n" +
+                    "                                    </div>\n" +
+                    "                                    <div class=\"order-info-item\">\n" +
+                    "                                        <div style='border-bottom: 1px solid red'>" +
+                    "                                        <span>配送状态: 骑手正在路上</span></div>\n" +
+                    "                                        <button type='button' class='connRiderBtn'>联系骑手</button>\n" +
+                    "                                    </div>\n" +
+                    "                                </div>");
+                node.find("button[class='connRiderBtn']").click(() => {
+                    modalShow(data[index].id, data[index].rider);
+                    btnAddMessItem(data[index].id, data[index].rider);
 
-                for (let i in dishes)
-                {
-                    count += dishes[i].count;
-                    priceCount += dishes[i].price * dishes[i].count;
+                })
 
-                    $("#orderList>#" + data[index].id + ">#orderListItems").append("<div class=\"order-view\">\n" +
-                        "                                        <div>\n" +
-                        "                                            <div class=\"order-dishes-view\">\n" +
-                        "                                                <img src='" + "/schoolres/images/" + dishes[i].photo + "' class=\"order-dishes-img\">\n" +
-                        "                                                <div class=\"order-dishes-text-view\">\n" +
-                        "                                                    <div style=\"display: flex; justify-content: space-between\">\n" +
-                        "                                                        <span>" + dishes[i].dishesName + "</span>\n" +
-                        "                                                    </div>\n" +
-                        "\n" +
-                        "                                                    <div class=\"order-dishes-text-view-sub\">\n" +
-                        "                                                        <div>\n" +
-                        "                                                            <span class=\"badge rounded-pill bg-warning\" style=\"margin-right: 5px\">商家描述:</span>\n" +
-                        "                                                        </div>\n" +
-                        "\n" +
-                        "                                                        <div style=\"border-bottom: 1px solid lightblue;\">\n" +
-                        "                                                            <span style=\"font-weight: lighter; font-size: small\" class='nowrap'>" + dishes[i].desc + "</span>\n" +
-                        "                                                        </div>\n" +
-                        "                                                    </div>\n" +
-                        "\n" +
-                        "                                                </div>\n" +
-                        "                                            </div>\n" +
-                        "                                            <div class=\"order-info-view\">\n" +
-                        "                                                <div class=\"order-info-item\">\n" +
-                        "                                                    <span>单价: </span>\n" +
-                        "                                                    <span>" + dishes[i].price + " <i class=\"bi bi-currency-yen\"></i></span>\n" +
-                        "                                                </div>\n" +
-                        "                                                <div class=\"order-info-item\">\n" +
-                        "                                                    <span>数量: </span>\n" +
-                        "                                                    <span>" + dishes[i].count + "</span>\n" +
-                        "                                                </div>\n" +
-                        "                                            </div>\n" +
-                        "                                        </div>\n" +
-                        "                                    </div>")
-                }
-
-                if (status == "0")
-                {
-                    $("#orderList>#" + data[index].id).append("<div class=\"order-info-full-view\">\n" +
-                        "                                    <div class=\"order-info-item\">\n" +
-                        "                                        <span>总价: </span>\n" +
-                        "                                        <span>" + priceCount + " <i class=\"bi bi-currency-yen\"></i></span>\n" +
-                        "                                    </div>\n" +
-                        "                                    <div class=\"order-info-item\">\n" +
-                        "                                        <span>数量: </span>\n" +
-                        "                                        <span>" + count + "</span>\n" +
-                        "                                    </div>\n" +
-                        "                                    <div class=\"order-info-item\">\n" +
-                        "                                        <span>餐具: </span>\n" +
-                        "                                        <span>2 份</span>\n" +
-                        "                                    </div>\n" +
-                        "                                    <div class=\"order-info-item\">\n" +
-                        "                                        <span>配送状态: </span>\n" +
-                        "                                        <span>未分配骑手</span>\n" +
-                        "                                    </div>\n" +
-                        "                                </div>");
-                }
-                else if (status == "1")
-                {
-                    let node = $("<div class=\"order-info-full-view\">\n" +
-                        "                                    <div class=\"order-info-item\">\n" +
-                        "                                        <span>总价: </span>\n" +
-                        "                                        <span>" + priceCount + " <i class=\"bi bi-currency-yen\"></i></span>\n" +
-                        "                                    </div>\n" +
-                        "                                    <div class=\"order-info-item\">\n" +
-                        "                                        <span>数量: </span>\n" +
-                        "                                        <span>" + count + "</span>\n" +
-                        "                                    </div>\n" +
-                        "                                    <div class=\"order-info-item\">\n" +
-                        "                                        <span>餐具: </span>\n" +
-                        "                                        <span>2 份</span>\n" +
-                        "                                    </div>\n" +
-                        "                                    <div class=\"order-info-item\">\n" +
-                        "                                        <div style='border-bottom: 1px solid red'>" +
-                        "                                        <span>配送状态: 骑手正在路上</span></div>\n" +
-                        "                                        <button type='button' class='connRiderBtn'>联系骑手</button>\n" +
-                        "                                    </div>\n" +
-                        "                                </div>");
-                    node.find("button[class='connRiderBtn']").click(() => {
-                        modalShow(data[index].id, data[index].rider);
-                        btnAddMessItem(data[index].id, data[index].rider);
-
-                    })
-
-                    $("#orderList>#" + data[index].id).append(node);
-                }
+                $("#orderList>#" + data[index].id).append(node);
             }
         }
-    })
+    }).fail(function (data) {
+        let toast = $("#alert-toast");
+        toast.find(".toast-body").text(data.responseText);
+        toast.show();
+
+        setTimeout(() => {
+            toast.hide();
+        }, 2000)
+    });
+
+    // $.getJSON("/user/getOrders", function (data, statusText) {
+    //     if (statusText == "success")
+    //     {
+    //         let orders = $("#orderList");
+    //         // console.log(data);
+    //
+    //         for (let index in data)
+    //         {
+    //             // let dishes = index.dishes;
+    //
+    //             orders.append("<li id='" + data[index].id + "' class=\"list-group-item\">\n" +
+    //                 "                                <div class=\"order-title-sty\">\n" +
+    //                 "                                    <h5>" + data[index].dishes[0].shopName + "</h5>\n" +
+    //                 "                                    <h5>#" + data[index].id + "</h5>\n" +
+    //                 "                                </div>\n" +
+    //                 "                                <div id='orderListItems'></div>" +
+    //                 "                                <hr style=\"border: 1px solid grey; margin-bottom: 0\">\n" +
+    //                 "                            </li>");
+    //
+    //             let count = priceCount = 0;
+    //             let dishes = data[index].dishes;
+    //             let status = data[index].status;
+    //
+    //             for (let i in dishes)
+    //             {
+    //                 count += dishes[i].count;
+    //                 priceCount += dishes[i].price * dishes[i].count;
+    //
+    //                 $("#orderList>#" + data[index].id + ">#orderListItems").append("<div class=\"order-view\">\n" +
+    //                     "                                        <div>\n" +
+    //                     "                                            <div class=\"order-dishes-view\">\n" +
+    //                     "                                                <img src='" + "/schoolres/images/" + dishes[i].photo + "' class=\"order-dishes-img\">\n" +
+    //                     "                                                <div class=\"order-dishes-text-view\">\n" +
+    //                     "                                                    <div style=\"display: flex; justify-content: space-between\">\n" +
+    //                     "                                                        <span>" + dishes[i].dishesName + "</span>\n" +
+    //                     "                                                    </div>\n" +
+    //                     "\n" +
+    //                     "                                                    <div class=\"order-dishes-text-view-sub\">\n" +
+    //                     "                                                        <div>\n" +
+    //                     "                                                            <span class=\"badge rounded-pill bg-warning\" style=\"margin-right: 5px\">商家描述:</span>\n" +
+    //                     "                                                        </div>\n" +
+    //                     "\n" +
+    //                     "                                                        <div style=\"border-bottom: 1px solid lightblue;\">\n" +
+    //                     "                                                            <span style=\"font-weight: lighter; font-size: small\" class='nowrap'>" + dishes[i].desc + "</span>\n" +
+    //                     "                                                        </div>\n" +
+    //                     "                                                    </div>\n" +
+    //                     "\n" +
+    //                     "                                                </div>\n" +
+    //                     "                                            </div>\n" +
+    //                     "                                            <div class=\"order-info-view\">\n" +
+    //                     "                                                <div class=\"order-info-item\">\n" +
+    //                     "                                                    <span>单价: </span>\n" +
+    //                     "                                                    <span>" + dishes[i].price + " <i class=\"bi bi-currency-yen\"></i></span>\n" +
+    //                     "                                                </div>\n" +
+    //                     "                                                <div class=\"order-info-item\">\n" +
+    //                     "                                                    <span>数量: </span>\n" +
+    //                     "                                                    <span>" + dishes[i].count + "</span>\n" +
+    //                     "                                                </div>\n" +
+    //                     "                                            </div>\n" +
+    //                     "                                        </div>\n" +
+    //                     "                                    </div>")
+    //             }
+    //
+    //             if (status == "0")
+    //             {
+    //                 $("#orderList>#" + data[index].id).append("<div class=\"order-info-full-view\">\n" +
+    //                     "                                    <div class=\"order-info-item\">\n" +
+    //                     "                                        <span>总价: </span>\n" +
+    //                     "                                        <span>" + priceCount + " <i class=\"bi bi-currency-yen\"></i></span>\n" +
+    //                     "                                    </div>\n" +
+    //                     "                                    <div class=\"order-info-item\">\n" +
+    //                     "                                        <span>数量: </span>\n" +
+    //                     "                                        <span>" + count + "</span>\n" +
+    //                     "                                    </div>\n" +
+    //                     "                                    <div class=\"order-info-item\">\n" +
+    //                     "                                        <span>餐具: </span>\n" +
+    //                     "                                        <span>2 份</span>\n" +
+    //                     "                                    </div>\n" +
+    //                     "                                    <div class=\"order-info-item\">\n" +
+    //                     "                                        <span>配送状态: </span>\n" +
+    //                     "                                        <span>未分配骑手</span>\n" +
+    //                     "                                    </div>\n" +
+    //                     "                                </div>");
+    //             }
+    //             else if (status == "1")
+    //             {
+    //                 let node = $("<div class=\"order-info-full-view\">\n" +
+    //                     "                                    <div class=\"order-info-item\">\n" +
+    //                     "                                        <span>总价: </span>\n" +
+    //                     "                                        <span>" + priceCount + " <i class=\"bi bi-currency-yen\"></i></span>\n" +
+    //                     "                                    </div>\n" +
+    //                     "                                    <div class=\"order-info-item\">\n" +
+    //                     "                                        <span>数量: </span>\n" +
+    //                     "                                        <span>" + count + "</span>\n" +
+    //                     "                                    </div>\n" +
+    //                     "                                    <div class=\"order-info-item\">\n" +
+    //                     "                                        <span>餐具: </span>\n" +
+    //                     "                                        <span>2 份</span>\n" +
+    //                     "                                    </div>\n" +
+    //                     "                                    <div class=\"order-info-item\">\n" +
+    //                     "                                        <div style='border-bottom: 1px solid red'>" +
+    //                     "                                        <span>配送状态: 骑手正在路上</span></div>\n" +
+    //                     "                                        <button type='button' class='connRiderBtn'>联系骑手</button>\n" +
+    //                     "                                    </div>\n" +
+    //                     "                                </div>");
+    //                 node.find("button[class='connRiderBtn']").click(() => {
+    //                     modalShow(data[index].id, data[index].rider);
+    //                     btnAddMessItem(data[index].id, data[index].rider);
+    //
+    //                 })
+    //
+    //                 $("#orderList>#" + data[index].id).append(node);
+    //             }
+    //         }
+    //     }
+    // })
 }
 
 let btnAddMessItem = function (orderid, rider) {
@@ -650,8 +769,11 @@ let showHistory = function () {
     let history_group = $("#history_list");
     history_group.children().remove();
 
-    $.getJSON("getHistory", function (data, statusText) {
-        // console.log(data);
+    $.ajax({
+        url : "/user/getHistory",
+        type : "get"
+    }).done(function (data) {
+
         for (let index in data)
         {
             history_group.append("<li id='history-item-" + data[index].id + "' class=\"list-group-item\">\n" +
@@ -683,5 +805,48 @@ let showHistory = function () {
                 "                                    <span class=\"history-item-text\">完成日期: " + data[index].date + "</span>\n" +
                 "                                </div>");
         }
+    }).fail(function (data) {
+        let toast = $("#alert-toast");
+        toast.find(".toast-body").text(data.responseText);
+        toast.show();
+
+        setTimeout(() => {
+            toast.hide();
+        }, 2000)
     })
+
+    // $.getJSON("/user/getHistory", function (data, statusText) {
+    //     console.log(data);
+    //     for (let index in data)
+    //     {
+    //         history_group.append("<li id='history-item-" + data[index].id + "' class=\"list-group-item\">\n" +
+    //             "                                <div class=\"order-title-sty\">\n" +
+    //             "                                    <h5>" + data[index].dishes[0].shopName + "</h5>\n" +
+    //             "                                    <h5>#" + data[index].id + "</h5>\n" +
+    //             "                                </div>\n" +
+    //             "                                <div id='historyItems'></div>" +
+    //             "                            </li>");
+    //
+    //         let dishes = data[index].dishes;
+    //         let price = 0;
+    //
+    //         for (let i in dishes)
+    //         {
+    //             price += dishes[i].price * dishes[i].count;
+    //             $("#history-item-" + data[index].id + ">#historyItems").append("<div class=\"order-dishes-view\" style=\"border-bottom: 1px solid gold\">\n" +
+    //                 "                                    <img src='" + "/schoolres/images/" + dishes[i].photo + "' class=\"order-dishes-img\">\n" +
+    //                 "                                    <div class=\"order-dishes-text-view\" style='margin-bottom: 5px'>\n" +
+    //                 "                                        <span>" + dishes[i].dishesName + "</span>\n" +
+    //                 "                                        <span class=\"history-item-text\">价格: " + dishes[i].price + "<i class=\"bi-currency-yen\"></i></span>\n" +
+    //                 "                                        <span class=\"history-item-text\">数量: x" + dishes[i].count + "</span>\n" +
+    //                 "                                    </div>\n" +
+    //                 "                                </div>");
+    //         }
+    //
+    //         $("#history-item-" + data[index].id).append("<div class=\"history-item-text-view\">\n" +
+    //             "                                    <span class=\"history-item-text\">总价: " + price + "<i class=\"bi-currency-yen\"></i></span>\n" +
+    //             "                                    <span class=\"history-item-text\">完成日期: " + data[index].date + "</span>\n" +
+    //             "                                </div>");
+    //     }
+    // })
 }

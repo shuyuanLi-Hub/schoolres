@@ -1,5 +1,6 @@
 package org.shuyuan.schoolres.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
@@ -11,6 +12,7 @@ import lombok.Setter;
 @Setter
 public class Address
 {
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "address_id")
@@ -19,6 +21,7 @@ public class Address
     @Column(name = "address_detail")
     private String detail;
 
+    @JsonIgnore
     @ManyToOne(targetEntity = User.class)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User user;

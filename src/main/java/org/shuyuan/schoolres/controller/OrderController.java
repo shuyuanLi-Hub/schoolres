@@ -1,5 +1,7 @@
 package org.shuyuan.schoolres.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -7,15 +9,22 @@ import org.shuyuan.schoolres.domain.Dishes;
 import org.shuyuan.schoolres.domain.Order;
 import org.shuyuan.schoolres.domain.Shop;
 import org.shuyuan.schoolres.domain.User;
+import org.shuyuan.schoolres.exceptions.CodeMsg;
+import org.shuyuan.schoolres.exceptions.UserException;
 import org.shuyuan.schoolres.service.order.OrderService;
+import org.shuyuan.schoolres.service.order.impl.OrderServiceImpl;
 import org.shuyuan.schoolres.service.shop.ShopService;
+import org.shuyuan.schoolres.service.user.UserService;
+import org.shuyuan.schoolres.utils.CookieUtil;
+import org.shuyuan.schoolres.utils.RabbitMQUtil;
+import org.springframework.amqp.core.AmqpAdmin;
+import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.amqp.rabbit.support.RabbitExceptionTranslator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
@@ -25,74 +34,37 @@ public class OrderController
 {
     private OrderService service;
     private ShopService shopService;
+    private UserService userService;
+    private AmqpTemplate amqpTemplate;
+    private AmqpAdmin amqpAdmin;
 
-    public OrderController(OrderService service, ShopService shopService)
+    public OrderController(OrderService service, ShopService shopService, UserService userService, AmqpTemplate amqpTemplate, AmqpAdmin amqpAdmin)
     {
         this.service = service;
         this.shopService = shopService;
+        this.userService = userService;
+        this.amqpTemplate = amqpTemplate;
+        this.amqpAdmin = amqpAdmin;
     }
 
     @SneakyThrows
-    @PostMapping("/orderOver")
+    @PostMapping("/orderOver/{address}")
     @ResponseBody
-    public void orderOver(@RequestBody List<Map<String, String>> data, HttpSession session)
+    @Async
+    public void overOrder(@RequestBody List<Map<String, String>> orders, @PathVariable("address") String addr, @MatrixVariable(required = false) String remark, HttpServletRequest request)
     {
-        Calendar calendar = Calendar.getInstance();
+        User user = (User) request.getAttribute("user");
+        orders.add(Map.of("user", "" + user.getId()));
 
-        Map<String, Map<Order, List<Order.OrderDishes>>> orderMap = new HashMap<>();
-
-        data.forEach(e -> {
-            if (orderMap.get(e.get("shop")) == null)
-            {
-                Map<Order, List<Order.OrderDishes>> od = new HashMap<>();
-                Order order = new Order(calendar.getTime(),
-                        new User((Integer) session.getAttribute("user_id")),
-                        '0',
-                        e.get("address"),
-                        e.get("remark"));
-
-                List<Order.OrderDishes> orderDishes = new ArrayList<>();
-                orderDishes.add(new Order.OrderDishes(
-                        new Dishes(Integer.valueOf(e.get("id"))),
-                        null ,
-                        Integer.valueOf(e.get("count")),
-                        new Shop(shopService.findShopByName(e.get("shop")).getId())));
-
-                od.put(order, orderDishes);
-
-                orderMap.put(e.get("shop"), od);
-            }
-            else
-            {
-                Map<Order, List<Order.OrderDishes>> od = orderMap.get(e.get("shop"));
-                od.forEach((k, v) -> {
-                    v.add(new Order.OrderDishes(
-                            new Dishes(Integer.valueOf(e.get("id"))),
-                            null ,
-                            Integer.valueOf(e.get("count")),
-                            new Shop(shopService.findShopByName(e.get("shop")).getId())));
-                });
-            }
-        });
-
-        orderMap.forEach((k, v) -> {
-            v.forEach((i, j) -> {
-                service.save(i, j);
-            });
-        });
-    }
-
-    @GetMapping("/getHistory")
-    @ResponseBody
-    public ResponseEntity<List<Order>> getHistory(HttpSession session)
-    {
-        if (session.getAttribute("user_name") != null)
+        if (remark == null)
         {
-            var data = service.findOrderByUserAndStatusNotIn((String) session.getAttribute("user_name"), List.of('0', '1'));
-
-            return new ResponseEntity<>(data, HttpStatus.OK);
+            orders.add(Map.of("addr", addr));
+        }
+        else
+        {
+            orders.add(Map.of("addr", addr, "remark", remark));
         }
 
-        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        service.orderOver(amqpAdmin, amqpTemplate, orders);
     }
 }

@@ -219,11 +219,15 @@ let addDishes = function () {
 }
 
 let updateDishes = function () {
-    if ($("input#modalCover").get(0).files[0].size > 5 * 1024 * 1024)
+    // console.log($("input#modalCover").get(0));
+    if ($("input#modalCover").get(0).files.length > 0)
     {
-        $("#modalCover").addClass("is-invalid");
+        if ($("input#modalCover").get(0).files[0].size > 5 * 1024 * 1024)
+        {
+            $("#modalCover").addClass("is-invalid");
 
-        return ;
+            return ;
+        }
     }
 
     $.ajax({
@@ -232,11 +236,20 @@ let updateDishes = function () {
         contentType: false,
         processData: false,
         data: new FormData($("#modalForm")[0])
-    }).done(function (data, statusText) {
+    }).done(function (data) {
         $("form#modalForm")[0].reset();
+        // console.log("data : " + data);
         if (data == "ok")
         {
+            $("#dishesModal").modal("hide");
             getDishes();
+        }
+    }).fail(function (data) {
+        // console.log(data.responseText);
+        if (data.responseText == "same")
+        {
+            $("#dishesNameFeed").text("菜名重复!")
+            $("input#dishesName").addClass("is-invalid");
         }
     })
 }
@@ -258,4 +271,8 @@ let deleteDishes = function () {
             toast.hide();
         }, 2000);
     })
+}
+
+let resetInput = function (obj) {
+    $(obj).removeClass("is-invalid");
 }

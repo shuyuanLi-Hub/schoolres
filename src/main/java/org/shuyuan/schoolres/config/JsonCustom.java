@@ -77,7 +77,6 @@ public class JsonCustom
 
     public static class UserSerializer extends JsonSerializer<User>
     {
-
         @Override
         public void serialize(User user, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException
         {
@@ -90,13 +89,16 @@ public class JsonCustom
             jsonGenerator.writeStringField("email", user.getEmail());
             jsonGenerator.writeStringField("photo", user.getPhoto());
             jsonGenerator.writeStringField("gender", String.valueOf(user.getGender()));
-            jsonGenerator.writeFieldName("address");
-            jsonGenerator.writeStartArray(user.getAddresses(), user.getAddresses().size());
-            for (var addr : user.getAddresses())
+            if (user.getAddresses() != null)
             {
-                jsonGenerator.writeString(addr.getDetail());
+                jsonGenerator.writeFieldName("address");
+                jsonGenerator.writeStartArray(user.getAddresses(), user.getAddresses().size());
+                for (var addr : user.getAddresses())
+                {
+                    jsonGenerator.writeString(addr.getDetail());
+                }
+                jsonGenerator.writeEndArray();
             }
-            jsonGenerator.writeEndArray();
             jsonGenerator.writeEndObject();
 
         }
